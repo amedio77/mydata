@@ -22,7 +22,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @RestController
@@ -63,6 +66,67 @@ public class MydataApplication {
     }
 
 
+    @GetMapping("/token")
+    public String getToken() throws JsonProcessingException {
+
+        String iUsrSeq       = "1";
+        String sOrgCode      = "0000000000";
+        String sClientId     = "ngUJWeOczZPYiHKZefKrth4Vb4d62WAE";
+        String sClientSecret = "KRDKw3I4tg6fn7J1fyZ1pefVpCbIIMtdSUfc";
+        String sCallbackURL  = "";
+        String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
+        String sApiCode      = "AU01";
+        String sFnGuideCode  = "2208191972";
+        String returnToken   = "";
+        String appScheme    = "appScheme";
+
+        //DateTime.Now.ToString("yyMMddHHmm");
+        String sApiTranID   = sFnGuideCode + "M" +sApiCode+getCurrentDateTime();
+
+
+        String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + sOrgCode + "&response_type=code"
+                + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
+
+        Map<String, String> requestHeaders = new HashMap<>();
+
+        requestHeaders.put("x-user-ci", sUserCi); // 헤더 추가
+        requestHeaders.put("x-api-tran-id", sApiTranID); // 헤더 추가
+        requestHeaders.put("X-FSI-MEM-NO", "FSI00000508"); // 헤더 추가
+        requestHeaders.put("X-FSI-BUS-SEQ-NO", "81"); // 헤더 추가
+        requestHeaders.put("X-FSI-SVC-DATA-KEY", "N"); // 헤더 추가
+        requestHeaders.put("X-FSI-UTCT-TYPE", "TGC00001"); // 헤더 추가
+
+        String responseBody = get(apiURL,requestHeaders);
+        System.out.println(responseBody);
+
+       // String sAuthCode = responseBody ; //responseBody 에서 sAuthCode 추출
+       // returnToken = getData(iUsrSeq, sClientId, sClientSecret, sCallbackURL, sOrgCode, sAuthCode);
+
+       // System.out.println("returnToken="+returnToken);
+
+
+
+
+        return responseBody;
+
+    }
+
+    public static String getCurrentDateTime() {
+        Date today = new Date();
+        Locale currentLocale = new Locale("KOREAN", "KOREA");
+        String pattern = "yyMMddHHmm"; //hhmmss로 시간,분,초만 뽑기도 가능
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern,
+                currentLocale);
+        return formatter.format(today);
+    }
+
+    private static String getData(String iUsrSeq, String sClientId, String sClientSecret, String sCallbackURL, String sOrgCode, String sAuthCode){
+
+
+        return "";
+    }
+
+
     private static String get(String apiUrl, Map<String, String> requestHeaders){
         HttpURLConnection con = connect(apiUrl);
         try {
@@ -73,8 +137,10 @@ public class MydataApplication {
 
             int responseCode = con.getResponseCode();
             if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+                System.out.println("get::정상호출");
                 return readBody(con.getInputStream());
             } else { // 에러 발생
+                System.out.println("get::에러발생");
                 return readBody(con.getErrorStream());
             }
         } catch (IOException e) {

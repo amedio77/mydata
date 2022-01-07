@@ -1,13 +1,12 @@
 server:
-  port: 8443
+  port: 443
   ssl:
     enabled: true
     protocol: TLS
     enabled-protocols: TLSv1.3
-    key-store: classpath:kanu-keystore.p12
+    key-store: classpath:key.p12
     key-store-type: PKCS12
     key-store-password: 123456
-    key-alias: kanu-keystore
-
+    key-alias: System
 #
 

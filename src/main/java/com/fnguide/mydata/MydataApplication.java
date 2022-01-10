@@ -78,7 +78,7 @@ public class MydataApplication {
         String sApiCode      = "AU01";
         String sFnGuideCode  = "2208191972";
         String returnToken   = "";
-        String appScheme    = "appScheme";
+        String appScheme    = "stdapi.myfn.net://";
 
         //DateTime.Now.ToString("yyMMddHHmm");
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+getCurrentDateTime();
@@ -101,11 +101,7 @@ public class MydataApplication {
 
        // String sAuthCode = responseBody ; //responseBody 에서 sAuthCode 추출
        // returnToken = getData(iUsrSeq, sClientId, sClientSecret, sCallbackURL, sOrgCode, sAuthCode);
-
        // System.out.println("returnToken="+returnToken);
-
-
-
 
         return responseBody;
 

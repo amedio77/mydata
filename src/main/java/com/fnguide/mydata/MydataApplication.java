@@ -73,7 +73,7 @@ public class MydataApplication {
         String sOrgCode      = "0000000000";
         String sClientId     = "ngUJWeOczZPYiHKZefKrth4Vb4d62WAE";
         String sClientSecret = "KRDKw3I4tg6fn7J1fyZ1pefVpCbIIMtdSUfc";
-        String sCallbackURL  = "";
+        String sCallbackURL  = "stdapi.myfn.net://";
         String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
         String sApiCode      = "AU01";
         String sFnGuideCode  = "2208191972";
@@ -85,7 +85,7 @@ public class MydataApplication {
 
 
         String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + sOrgCode + "&response_type=code"
-                + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
+                + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + sCallbackURL + "&state=manage";
 
         Map<String, String> requestHeaders = new HashMap<>();
 

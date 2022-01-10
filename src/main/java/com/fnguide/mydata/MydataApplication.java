@@ -2,6 +2,7 @@ package com.fnguide.mydata;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpEntity;
@@ -16,6 +17,11 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -99,9 +105,17 @@ public class MydataApplication {
         String responseBody = get(apiURL,requestHeaders);
         System.out.println(responseBody);
 
-       // String sAuthCode = responseBody ; //responseBody 에서 sAuthCode 추출
-       // returnToken = getData(iUsrSeq, sClientId, sClientSecret, sCallbackURL, sOrgCode, sAuthCode);
-       // System.out.println("returnToken="+returnToken);
+       String sAuthCode = "" ; //responseBody 에서 sAuthCode 추출
+       JSONParser jsonParser = new JSONParser();
+        try {
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
+            sAuthCode = (String) jsonObject.get("code");
+            System.out.println("sAuthCode="+sAuthCode);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        returnToken = getData(iUsrSeq, sClientId, sClientSecret, sCallbackURL, sOrgCode, sAuthCode);
+        System.out.println("returnToken="+returnToken);
 
         return responseBody;
 
@@ -119,6 +133,28 @@ public class MydataApplication {
     private static String getData(String iUsrSeq, String sClientId, String sClientSecret, String sCallbackURL, String sOrgCode, String sAuthCode){
 
 
+        String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
+        String sApiCode      = "AU01";
+        String sFnGuideCode  = "2208191972";
+        String sApiTranID   = sFnGuideCode + "M" +sApiCode+getCurrentDateTime();
+        String sURL = "https://developers.mydatakorea.org:9443/oauth/2.0/token";
+
+        String sParam = "org_code=" + sOrgCode + "&grant_type=authorization_code" + "&code=" + sAuthCode
+                + "&client_id=" + sClientId + "&client_secret=" + sClientSecret + "&redirect_uri=" + sCallbackURL;
+
+        Map<String, String> requestHeaders = new HashMap<>();
+
+        requestHeaders.put("x-user-ci", sUserCi); // 헤더 추가
+        requestHeaders.put("x-api-tran-id", sApiTranID); // 헤더 추가
+        requestHeaders.put("X-FSI-MEM-NO", "FSI00000508"); // 헤더 추가
+        requestHeaders.put("X-FSI-BUS-SEQ-NO", "81"); // 헤더 추가
+        requestHeaders.put("X-FSI-SVC-DATA-KEY", "N"); // 헤더 추가
+        requestHeaders.put("X-FSI-UTCT-TYPE", "TGC00001"); // 헤더 추가
+
+        String responseBody = post(sURL,requestHeaders);
+        System.out.println("getData responseBody::"+responseBody);
+
+
         return "";
     }
 
@@ -127,6 +163,29 @@ public class MydataApplication {
         HttpURLConnection con = connect(apiUrl);
         try {
             con.setRequestMethod("GET");
+            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
+                con.setRequestProperty(header.getKey(), header.getValue());
+            }
+
+            int responseCode = con.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
+                System.out.println("get::정상호출");
+                return readBody(con.getInputStream());
+            } else { // 에러 발생
+                System.out.println("get::에러발생");
+                return readBody(con.getErrorStream());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("API 요청과 응답 실패", e);
+        } finally {
+            con.disconnect();
+        }
+    }
+
+    private static String post(String apiUrl, Map<String, String> requestHeaders){
+        HttpURLConnection con = connect(apiUrl);
+        try {
+            con.setRequestMethod("POST");
             for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
                 con.setRequestProperty(header.getKey(), header.getValue());
             }

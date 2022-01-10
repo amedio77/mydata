@@ -3,6 +3,7 @@ package com.fnguide.mydata;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpEntity;
@@ -38,6 +39,26 @@ import java.util.Map;
 @SpringBootApplication
 public class MydataApplication {
 
+    @Value("${config.user-seq}")
+    String iUsrSeq;
+    @Value("${config.org-code}")
+    String sOrgCode;
+    @Value("${config.client-id}")
+    String sClientId;
+    @Value("${config.client-secret}")
+    String sClientSecret;
+    @Value("${config.callback-url}")
+    String sCallbackURL;
+    @Value("${config.user-ci}")
+    String sUserCi;
+    @Value("${config.api-code}")
+    String sApiCode;
+    @Value("${config.fnguide-code}")
+    String sFnGuideCode;
+    @Value("${config.app-scheme}")
+    String appScheme;
+
+
     public static void main(String[] args) {
         SpringApplication.run(MydataApplication.class, args);
         System.out.println("spring boot test !!!");
@@ -63,7 +84,7 @@ public class MydataApplication {
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", clientId);
         requestHeaders.put("X-Naver-Client-Secret", clientSecret);
-        String responseBody = get(apiURL,requestHeaders);
+        String responseBody = sendRequest("GET", apiURL,requestHeaders);
 
         System.out.println(responseBody);
 
@@ -75,17 +96,6 @@ public class MydataApplication {
     @GetMapping("/token")
     public String getToken() throws JsonProcessingException {
 
-        String iUsrSeq       = "1";
-        String sOrgCode      = "0000000000";
-        String sClientId     = "Tb22zxBwrQ5Nyd6YxWHsAK3y40qiKNsk";
-        String sClientSecret = "KRDKw3I4tg6fn7J1fyZ1pefVpCbIIMtdSUfc";
-        String sCallbackURL  = "https://apidev.myfn.net/MyData/AuthCallback";
-        String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
-        String sApiCode      = "AU01";
-        String sFnGuideCode  = "2208191972";
-        String returnToken   = "";
-        String appScheme    = "https://apidev.myfn.net/MyData";
-
         //DateTime.Now.ToString("yyMMddHHmm");
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+getCurrentDateTime();
 
@@ -93,6 +103,7 @@ public class MydataApplication {
         String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + sOrgCode + "&response_type=code"
                 + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
 
+        String returnToken = "";
         Map<String, String> requestHeaders = new HashMap<>();
 
         requestHeaders.put("x-user-ci", sUserCi); // 헤더 추가
@@ -102,7 +113,7 @@ public class MydataApplication {
         requestHeaders.put("X-FSI-SVC-DATA-KEY", "N"); // 헤더 추가
         requestHeaders.put("X-FSI-UTCT-TYPE", "TGC00001"); // 헤더 추가
 
-        String responseBody = get(apiURL,requestHeaders);
+        String responseBody = sendRequest("GET", apiURL,requestHeaders);
         System.out.println(responseBody);
 
        String sAuthCode = "" ; //responseBody 에서 sAuthCode 추출
@@ -114,8 +125,9 @@ public class MydataApplication {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        returnToken = getData(iUsrSeq, sClientId, sClientSecret, sCallbackURL, sOrgCode, sAuthCode);
-        System.out.println("returnToken="+returnToken);
+
+        responseBody = getData(iUsrSeq, sClientId, sClientSecret, sCallbackURL, sOrgCode, sAuthCode);
+        System.out.println("responseBody="+responseBody);
 
         return responseBody;
 
@@ -132,7 +144,6 @@ public class MydataApplication {
 
     private static String getData(String iUsrSeq, String sClientId, String sClientSecret, String sCallbackURL, String sOrgCode, String sAuthCode){
 
-
         String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
         String sApiCode      = "AU01";
         String sFnGuideCode  = "2208191972";
@@ -141,6 +152,8 @@ public class MydataApplication {
 
         String sParam = "org_code=" + sOrgCode + "&grant_type=authorization_code" + "&code=" + sAuthCode
                 + "&client_id=" + sClientId + "&client_secret=" + sClientSecret + "&redirect_uri=" + sCallbackURL;
+
+        sURL = sURL +"?"+ sParam;
 
         Map<String, String> requestHeaders = new HashMap<>();
 
@@ -151,18 +164,18 @@ public class MydataApplication {
         requestHeaders.put("X-FSI-SVC-DATA-KEY", "N"); // 헤더 추가
         requestHeaders.put("X-FSI-UTCT-TYPE", "TGC00001"); // 헤더 추가
 
-        String responseBody = post(sURL,requestHeaders);
+        String responseBody = sendRequest("POST",sURL,requestHeaders);
         System.out.println("getData responseBody::"+responseBody);
 
 
-        return "";
+        return responseBody;
     }
 
 
-    private static String get(String apiUrl, Map<String, String> requestHeaders){
+    private static String sendRequest(String method, String apiUrl, Map<String, String> requestHeaders){
         HttpURLConnection con = connect(apiUrl);
         try {
-            con.setRequestMethod("GET");
+            con.setRequestMethod(method);
             for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
                 con.setRequestProperty(header.getKey(), header.getValue());
             }
@@ -182,28 +195,6 @@ public class MydataApplication {
         }
     }
 
-    private static String post(String apiUrl, Map<String, String> requestHeaders){
-        HttpURLConnection con = connect(apiUrl);
-        try {
-            con.setRequestMethod("POST");
-            for(Map.Entry<String, String> header :requestHeaders.entrySet()) {
-                con.setRequestProperty(header.getKey(), header.getValue());
-            }
-
-            int responseCode = con.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) { // 정상 호출
-                System.out.println("get::정상호출");
-                return readBody(con.getInputStream());
-            } else { // 에러 발생
-                System.out.println("get::에러발생");
-                return readBody(con.getErrorStream());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("API 요청과 응답 실패", e);
-        } finally {
-            con.disconnect();
-        }
-    }
 
     private static HttpURLConnection connect(String apiUrl){
         try {

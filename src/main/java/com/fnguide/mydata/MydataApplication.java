@@ -71,21 +71,21 @@ public class MydataApplication {
 
         String iUsrSeq       = "1";
         String sOrgCode      = "0000000000";
-        String sClientId     = "ngUJWeOczZPYiHKZefKrth4Vb4d62WAE";
+        String sClientId     = "Tb22zxBwrQ5Nyd6YxWHsAK3y40qiKNsk";
         String sClientSecret = "KRDKw3I4tg6fn7J1fyZ1pefVpCbIIMtdSUfc";
-        String sCallbackURL  = "stdapi.myfn.net";
+        String sCallbackURL  = "https://apidev.myfn.net/MyData/AuthCallback";
         String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
         String sApiCode      = "AU01";
         String sFnGuideCode  = "2208191972";
         String returnToken   = "";
-        String appScheme    = "stdapi.myfn.net";
+        String appScheme    = "https://apidev.myfn.net/MyData";
 
         //DateTime.Now.ToString("yyMMddHHmm");
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+getCurrentDateTime();
 
 
         String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + sOrgCode + "&response_type=code"
-                + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + sCallbackURL + "&state=manage";
+                + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
 
         Map<String, String> requestHeaders = new HashMap<>();
 

@@ -136,7 +136,7 @@ public class MydataApplication {
     public static String getCurrentDateTime() {
         Date today = new Date();
         Locale currentLocale = new Locale("KOREAN", "KOREA");
-        String pattern = "yyMMddHHmm"; //hhmmss로 시간,분,초만 뽑기도 가능
+        String pattern = "yyMMddHHmm"; //hhmmss로 시간,분,초만 뽑기도 가능....
         SimpleDateFormat formatter = new SimpleDateFormat(pattern,
                 currentLocale);
         return formatter.format(today);

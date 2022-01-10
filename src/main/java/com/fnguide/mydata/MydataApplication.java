@@ -73,12 +73,12 @@ public class MydataApplication {
         String sOrgCode      = "0000000000";
         String sClientId     = "ngUJWeOczZPYiHKZefKrth4Vb4d62WAE";
         String sClientSecret = "KRDKw3I4tg6fn7J1fyZ1pefVpCbIIMtdSUfc";
-        String sCallbackURL  = "stdapi.myfn.net://";
+        String sCallbackURL  = "stdapi.myfn.net";
         String sUserCi       = "NsoFzzUqcMfSseGcFVbkARcukDJtCfxt";
         String sApiCode      = "AU01";
         String sFnGuideCode  = "2208191972";
         String returnToken   = "";
-        String appScheme    = "stdapi.myfn.net://";
+        String appScheme    = "stdapi.myfn.net";
 
         //DateTime.Now.ToString("yyMMddHHmm");
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+getCurrentDateTime();

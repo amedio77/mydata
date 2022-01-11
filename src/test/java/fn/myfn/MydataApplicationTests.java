@@ -1,4 +1,4 @@
-package com.fnguide.mydata;
+package fn.myfn;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

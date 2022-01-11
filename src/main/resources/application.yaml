@@ -21,7 +21,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://10.10.50.7;instanceName=mydataorg
+    url: jdbc:sqlserver://10.10.20.7:63331;databaseName=mydataorg
     username: myapp
     password: akdlepdlxj123$%^
 

@@ -1,6 +1,7 @@
 package fn.myfn.oauth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import fn.myfn.comm.CommMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -50,6 +51,9 @@ public class Auth {
     @Autowired
     AuthMapper authMapper;
 
+    @Autowired
+    CommMapper commMapper;
+
     /**
      * Description : 인가코드 발글 요청
      * Method Name : authorize
@@ -63,22 +67,33 @@ public class Auth {
      * ----------------------------------------------------------------------------------
      */
     public String authorize() throws JsonProcessingException {
-        System.out.println("authorize enter !!!");
-        //LOGGER.info("logtest :: ok ");
-        //LOGGER.info("getCurrentTime DB :: "+authMapper.getCurrentTime());
+        Util util = new Util();
+
+        String sStartTime= "";
+        String sEndTime = "";
+        String orgCode = "";
+        String userCi = "";
+        String sTrdDt = util.getCurrentDateTime("yyyyMMdd");
+
         Map<String,String> userData = authMapper.getUserData(iUsrSeq,"");
-        String orgCode = userData.get("ORG_CODE");
-        String userCi = userData.get("USER_CI");
+
+
+        orgCode = userData.get("ORG_CODE");
+        userCi = userData.get("USER_CI");
 
         LOGGER.info("userData :: ORG_CODE="+orgCode);
         LOGGER.info("userData :: USER_CI="+userCi);
 
-        Util util = new Util();
-        String sApiTranID   = sFnGuideCode + "M" +sApiCode+util.getCurrentDateTime();
-        String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + orgCode + "&response_type=code"
+
+        sStartTime = util.getCurrentDateTime();
+        String sApiTranID   = sFnGuideCode + "M" + sApiCode + util.getCurrentDateTime();
+        String sURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + orgCode + "&response_type=code"
                 + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
 
-        LOGGER.info("userData :: apiURL="+apiURL);
+        String sApiParam = "org_code=" + orgCode + "&response_type=code"
+                + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
+
+        LOGGER.info("userData :: sURL="+sURL);
 
         String returnToken = "";
         Map<String, String> requestHeaders = new HashMap<>();
@@ -90,11 +105,13 @@ public class Auth {
         requestHeaders.put("X-FSI-SVC-DATA-KEY", "N"); // 헤더 추가
         requestHeaders.put("X-FSI-UTCT-TYPE", "TGC00001"); // 헤더 추가
 
-        String responseBody = util.sendRequest("GET", apiURL,requestHeaders);
+        String responseBody = util.sendRequest("GET", sURL, requestHeaders);
 
         JSONObject jsonObject = util.getJsonObject(responseBody);
         String sAuthCode = jsonObject.get("code").toString();
 
+        sEndTime = util.getCurrentDateTime();
+        commMapper.SaveLog(3, iUsrSeq, sOrgCode, sTrdDt, sApiCode, sApiTranID, sURL, sApiParam, sStartTime, sEndTime, false, "");
 
         return responseBody;
     }

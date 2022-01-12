@@ -79,6 +79,14 @@ public class Util {
         return formatter.format(today);
     }
 
+    public  String getCurrentDateTime(String pattern) {
+        Date today = new Date();
+        Locale currentLocale = new Locale("KOREAN", "KOREA");
+        SimpleDateFormat formatter = new SimpleDateFormat(pattern,
+                currentLocale);
+        return formatter.format(today);
+    }
+
     public JSONObject getJsonObject(String responseBody){
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = null;

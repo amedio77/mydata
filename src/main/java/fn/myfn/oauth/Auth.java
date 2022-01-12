@@ -65,8 +65,8 @@ public class Auth {
     public String authorize() throws JsonProcessingException {
         System.out.println("authorize enter !!!");
         LOGGER.info("logtest :: ok ");
-        //LOGGER.info("getUserData :: "+authMapper.getUserData(1,sOrgCode));
-        //LOGGER.info("getCurrentTime DB :: "+authMapper.getCurrentTime());
+        LOGGER.info("getUserData :: "+authMapper.getUserData(1,sOrgCode));
+        LOGGER.info("getCurrentTime DB :: "+authMapper.getCurrentTime());
 
 
         Util util = new Util();

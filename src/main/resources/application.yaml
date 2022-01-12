@@ -21,7 +21,7 @@ server:
 spring:
   logging:
     level:
-      root: warn
+      root: info
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     url: jdbc:sqlserver://10.10.20.7:63331;databaseName=mydataorg

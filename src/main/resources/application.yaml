@@ -11,7 +11,7 @@ config:
 server:
   port: 443
   ssl:
-    enabled: false
+    enabled: true
     protocol: TLS
     enabled-protocols: TLSv1.3
     key-store: classpath:key.p12

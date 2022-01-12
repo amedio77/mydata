@@ -11,4 +11,12 @@
         FROM USER_OAUTH_TOKEN
         WHERE USR_SEQ = #{iUsrSeq}
     </select>
+
+    <update id="updateUserData"   parameterType="hashmap">
+        UPDATE USER_OAUTH_TOKEN
+        SET TOKEN_TM = #{sTokenTM}, ACCESS_TOKEN = #{sToken}, EXPIRES_IN = #{sExpires_in},
+            REFRESH_TOKEN = #{sReToken}, REFRESH_TOKEN_EXPIRES_IN = #{sReExpires_in}, SCOPE = #{sScope}
+        WHERE USR_SEQ = #{iUsrSeq} AND ORG_CODE = #{sOrgCode}
+    </update>
+
 </mapper>

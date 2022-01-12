@@ -45,6 +45,9 @@ public class Auth {
     String sFnGuideCode;
     @Value("${config.app-scheme}")
     String appScheme;
+    @Value("${mydata-korea-url}")
+    String mUrl;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Auth.class);
 
@@ -87,7 +90,7 @@ public class Auth {
 
         sStartTime = util.getCurrentDateTime();
         String sApiTranID   = sFnGuideCode + "M" + sApiCode + util.getCurrentDateTime();
-        String sURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + orgCode + "&response_type=code"
+        String sURL = mUrl+"/oauth/2.0/authorize?org_code=" + orgCode + "&response_type=code"
                 + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
 
         String sApiParam = "org_code=" + orgCode + "&response_type=code"
@@ -128,23 +131,19 @@ public class Auth {
      * 2022.01.12  이우송       최초작성
      * ----------------------------------------------------------------------------------
      */
-    public String token() throws JsonProcessingException {
+    public String token() throws JsonProcessingException,ParseException {
         String responseBody = authorize();
         System.out.println(responseBody);
 
         String sAuthCode = "" ; //responseBody 에서 sAuthCode 추출
         JSONParser jsonParser = new JSONParser();
-        try {
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
-            sAuthCode = (String) jsonObject.get("code");
-            System.out.println("sAuthCode="+sAuthCode);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
+        sAuthCode = (String) jsonObject.get("code");
+        System.out.println("sAuthCode="+sAuthCode);
 
         Util util = new Util();
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+util.getCurrentDateTime();
-        String sURL = "https://developers.mydatakorea.org:9443/oauth/2.0/token";
+        String sURL = mUrl+"/oauth/2.0/token";
 
         String sParam = "org_code=" + sOrgCode + "&grant_type=authorization_code" + "&code=" + sAuthCode
                 + "&client_id=" + sClientId + "&client_secret=" + sClientSecret + "&redirect_uri=" + sCallbackURL;
@@ -162,6 +161,19 @@ public class Auth {
 
         responseBody = util.sendRequest("POST",sURL,requestHeaders);
         System.out.println("responseBody="+responseBody);
+
+        jsonParser = new JSONParser();
+        jsonObject = (JSONObject) jsonParser.parse(responseBody);
+        sAuthCode = (String) jsonObject.get("code");
+        String sTokenTM = "";
+        String sToken = (String) jsonObject.get("ACCESS_TOKEN");
+        String sExpires_in = (String) jsonObject.get("EXPIRES_IN");
+        String sReToken = (String) jsonObject.get("REFRESH_TOKEN");
+        String sReExpires_in = (String) jsonObject.get("REFRESH_TOKEN_EXPIRES_IN");
+        String sScope = (String) jsonObject.get("SCOPE");
+
+        authMapper.updateUserData(sTokenTM , sToken , sExpires_in , sReToken,
+                sReExpires_in ,sScope , iUsrSeq , sOrgCode);
 
         return responseBody;
 
@@ -201,7 +213,7 @@ public class Auth {
 
 
 
-        String sURL = "https://developers.mydatakorea.org:9443/oauth/2.0/token";
+        String sURL = mUrl+"/oauth/2.0/token";
 
         String sParam = "org_code=" + sOrgCode + "&grant_type=refresh_token&refresh_token=" + sReToken
                 + "&client_id=" + sClientId + "&client_secret=" + sClientSecret;

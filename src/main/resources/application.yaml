@@ -8,6 +8,7 @@ config:
   api-code: AU01
   fnguide-code: 2208191972
   app-scheme: https://apidev.myfn.net/MyData
+  mydata-korea-url: https://developers.mydatakorea.org:9443
 server:
   port: 443
   ssl:

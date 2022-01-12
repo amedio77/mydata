@@ -65,7 +65,7 @@ public class Auth {
     public String authorize() throws JsonProcessingException {
         System.out.println("authorize enter !!!");
         LOGGER.info("logtest :: ");
-        //LOGGER.debug("getCurrentTime DB :: "+authMapper.getCurrentTime());
+        LOGGER.debug("getCurrentTime DB :: "+authMapper.getCurrentTime());
 
         Util util = new Util();
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+util.getCurrentDateTime();

@@ -11,7 +11,7 @@ config:
 server:
   port: 443
   ssl:
-    enabled: true
+    enabled: false
     protocol: TLS
     enabled-protocols: TLSv1.3
     key-store: classpath:key.p12
@@ -23,8 +23,10 @@ spring:
     level:
       root: info
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://10.10.20.7:63331;databaseName=mydataorg
+    #driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    #url: jdbc:sqlserver://10.10.20.7:63331;databaseName=mydataorg
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:sqlserver://10.10.20.7:63331;databaseName=mydataorg
     username: myapp
     password: akdlepdlxj123$%^
 

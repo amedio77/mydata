@@ -27,7 +27,7 @@ public class Auth {
 
 
     @Value("${config.user-seq}")
-    String iUsrSeq;
+    int iUsrSeq;
     @Value("${config.org-code}")
     String sOrgCode;
     @Value("${config.client-id}")
@@ -64,20 +64,26 @@ public class Auth {
      */
     public String authorize() throws JsonProcessingException {
         System.out.println("authorize enter !!!");
-        LOGGER.info("logtest :: ok ");
-        LOGGER.info("getUserData :: "+authMapper.getUserData(1,sOrgCode));
-        LOGGER.info("getCurrentTime DB :: "+authMapper.getCurrentTime());
+        //LOGGER.info("logtest :: ok ");
+        //LOGGER.info("getCurrentTime DB :: "+authMapper.getCurrentTime());
+        Map<String,String> userData = authMapper.getUserData(iUsrSeq,"");
+        String orgCode = userData.get("ORG_CODE");
+        String userCi = userData.get("USER_CI");
 
+        LOGGER.info("userData :: ORG_CODE="+orgCode);
+        LOGGER.info("userData :: USER_CI="+userCi);
 
         Util util = new Util();
         String sApiTranID   = sFnGuideCode + "M" +sApiCode+util.getCurrentDateTime();
-        String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + sOrgCode + "&response_type=code"
+        String apiURL = "https://developers.mydatakorea.org:9443/oauth/2.0/authorize?org_code=" + orgCode + "&response_type=code"
                 + "&client_id=" + sClientId + "&redirect_uri=" + sCallbackURL + "&app_scheme=" + appScheme + "&state=manage";
+
+        LOGGER.info("userData :: apiURL="+apiURL);
 
         String returnToken = "";
         Map<String, String> requestHeaders = new HashMap<>();
 
-        requestHeaders.put("x-user-ci", sUserCi); // 헤더 추가
+        requestHeaders.put("x-user-ci", userCi); // 헤더 추가
         requestHeaders.put("x-api-tran-id", sApiTranID); // 헤더 추가
         requestHeaders.put("X-FSI-MEM-NO", "FSI00000508"); // 헤더 추가
         requestHeaders.put("X-FSI-BUS-SEQ-NO", "81"); // 헤더 추가

@@ -5,4 +5,10 @@
     <select id="getCurrentTime" resultType="String">
         SELECT SYSDATETIME()
     </select>
+
+    <select id="getUserData" resultType="map"  parameterType="hashmap">
+        SELECT USR_SEQ, USER_CI, ORG_CODE, TOKEN_TM, ACCESS_TOKEN, EXPIRES_IN, REFRESH_TOKEN, REFRESH_TOKEN_EXPIRES_IN
+        FROM USER_OAUTH_TOKEN
+        WHERE USR_SEQ = #{iUsrSeq}
+    </select>
 </mapper>

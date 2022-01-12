@@ -1,5 +1,9 @@
 package fn.myfn.comm;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,5 +77,18 @@ public class Util {
         SimpleDateFormat formatter = new SimpleDateFormat(pattern,
                 currentLocale);
         return formatter.format(today);
+    }
+
+    public JSONObject getJsonObject(String responseBody){
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = (JSONObject) jsonParser.parse(responseBody);
+            System.out.println("jsonObject="+jsonObject);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
     }
 }

@@ -45,7 +45,7 @@ public class Auth {
     String sFnGuideCode;
     @Value("${config.app-scheme}")
     String appScheme;
-    @Value("${mydata-korea-url}")
+    @Value("${config.mydata-korea-url}")
     String mUrl;
 
 

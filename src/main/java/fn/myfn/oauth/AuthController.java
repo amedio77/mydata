@@ -1,6 +1,7 @@
 package fn.myfn.oauth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,7 @@ public class AuthController {
      * ----------------------------------------------------------------------------------
      */
     @GetMapping("/oauth/2.0/token")
-    public String token() throws JsonProcessingException {
+    public String token() throws JsonProcessingException, ParseException {
 
         String responseBody = auth.token();
 
